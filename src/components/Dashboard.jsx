@@ -248,7 +248,7 @@ const TradingDashboard = ({ onLogout }) => {
         />
 
           {/* Main Content Area */}
-        <div className="flex-1 bg-[#1a1a1a] overflow-hidden flex flex-col">
+        <div className="flex-1 bg-[#1a1a1a] overflow-hidden flex flex-col w-full lg:w-auto">
           {activeTab === 'orders' ? (
             <OrdersView 
               orders={orders}

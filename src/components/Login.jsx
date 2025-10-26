@@ -219,13 +219,13 @@ export default function Login({ onLogin }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
-          className="min-h-screen bg-gray-900 flex items-center justify-center p-8"
+          className="min-h-screen bg-gray-900 flex items-center justify-center p-4 sm:p-8"
         >
-          <div className="w-full max-w-7xl h-[700px] bg-[#1e1e1e] backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-700 overflow-hidden flex">
+          <div className="w-full max-w-7xl h-auto sm:h-[700px] bg-[#1e1e1e] backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-2xl border border-gray-700 overflow-hidden flex flex-col lg:flex-row">
             
             {/* Left Side - Buy/Sell Image */}
             <div
-              className="w-1/2 relative flex items-center justify-center"
+              className="hidden lg:flex w-full lg:w-1/2 h-[300px] sm:h-[400px] lg:h-full relative items-center justify-center"
               onMouseEnter={() => setHovered(true)}
               onMouseLeave={() => setHovered(false)}
             >
@@ -238,7 +238,7 @@ export default function Login({ onLogin }) {
             </div>
 
             {/* Right Side - Login Form */}
-            <div className="w-1/2 flex flex-col items-center justify-center p-12 relative">
+            <div className="w-full lg:w-1/2 flex flex-col items-center justify-center p-6 sm:p-8 lg:p-12 relative">
               {/* Background decoration */}
               <div className="absolute inset-0 bg-gradient-to-tl from-[#252525]/30 to-transparent" />
 
@@ -249,26 +249,26 @@ export default function Login({ onLogin }) {
                 className="w-full max-w-md relative z-10"
               >
                 {/* Header */}
-                <div className="mb-10">
-                  <h1 className="text-5xl font-bold mb-3 text-orange-500">
+                <div className="mb-6 sm:mb-8 lg:mb-10">
+                  <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-2 sm:mb-3 text-orange-500">
                     Welcome
                   </h1>
-                  <p className="text-gray-400 text-lg">
+                  <p className="text-gray-400 text-sm sm:text-base lg:text-lg">
                     {step === 1 ? 'Enter your details to get started' : 'Almost there! Just one more step'}
                   </p>
                 </div>
 
                 {/* Progress indicator */}
-                <div className="flex items-center mb-8">
-                  <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold transition-all ${
+                <div className="flex items-center mb-6 sm:mb-8">
+                  <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center font-bold transition-all text-sm sm:text-base ${
                     step >= 1 ? 'bg-orange-600 text-white' : 'bg-[#2a2a2a] text-gray-500'
                   }`}>
                     1
                   </div>
-                  <div className={`flex-1 h-1 mx-3 transition-all ${
+                  <div className={`flex-1 h-1 mx-2 sm:mx-3 transition-all ${
                     step >= 2 ? 'bg-orange-600' : 'bg-[#2a2a2a]'
                   }`} />
-                  <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold transition-all ${
+                  <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center font-bold transition-all text-sm sm:text-base ${
                     step >= 2 ? 'bg-orange-600 text-white' : 'bg-[#2a2a2a] text-gray-500'
                   }`}>
                     2

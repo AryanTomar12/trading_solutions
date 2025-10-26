@@ -94,16 +94,19 @@ const Watchlist = ({
     return colorMap[colorName] || 'bg-blue-500';
   };
   return (
-    <div className="w-120 border-r border-gray-700 bg-gray-800 flex-shrink-0 overflow-y-auto">
-      <div className="bg-gray-800 p-4">
-        <div className="flex items-center justify-between mb-4">
+    <div className="hidden lg:block w-80 xl:w-96 border-r border-gray-700 bg-gray-800 flex-shrink-0 overflow-y-auto">
+      <div className="bg-gray-800 p-3 xl:p-4">
+        <div className="flex items-center justify-between mb-3 xl:mb-4">
           <div className="relative flex-1">
             <button
               onClick={() => setShowWatchlistDropdown(!showWatchlistDropdown)}
-              className="flex items-center gap-2 text-lg font-semibold text-white hover:text-blue-400 transition-colors"
+              className="flex items-center gap-2 text-sm xl:text-lg font-semibold text-white hover:text-blue-400 transition-colors"
             >
               <div className={`w-2 h-2 rounded-full ${getColorClass(currentWatchlist.color)}`}></div>
-              {currentWatchlist.name} ({stockData.length} / 250)
+              <span className="hidden xl:inline">{currentWatchlist.name}</span>
+              <span className="xl:hidden">{currentWatchlist.name}</span>
+              <span className="hidden lg:inline xl:hidden">({stockData.length})</span>
+              <span className="hidden xl:inline">({stockData.length} / 250)</span>
               <ChevronRight className={`w-4 h-4 transition-transform ${showWatchlistDropdown ? 'rotate-90' : ''}`} />
             </button>
 
@@ -134,31 +137,31 @@ const Watchlist = ({
           </div>
           <button 
             onClick={() => setShowNewGroupModal(true)}
-            className="text-sm text-blue-400 hover:text-blue-300 transition-colors ml-2"
+            className="text-xs xl:text-sm text-blue-400 hover:text-blue-300 transition-colors ml-2 whitespace-nowrap"
           >
-            + New group
+            + New
           </button>
         </div>
 
         {/* Search Bar */}
-        <div className="mb-4 relative">
+        <div className="mb-3 xl:mb-4 relative">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-2 xl:left-3 top-1/2 transform -translate-y-1/2 w-3 h-3 xl:w-4 xl:h-4 text-gray-400" />
             <input
               type="text"
-              placeholder="Search eg: infy bse, nifty fut, index fund, etc"
+              placeholder="Search stocks..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-20 py-2 bg-[#2a2a2a] border border-gray-600 rounded text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
+              className="w-full pl-8 xl:pl-10 pr-14 xl:pr-20 py-1.5 xl:py-2 bg-[#2a2a2a] border border-gray-600 rounded text-white text-sm xl:text-base placeholder-gray-400 focus:outline-none focus:border-blue-500"
             />
-            <button className="absolute right-12 top-1/2 transform -translate-y-1/2 px-2 py-1 text-xs text-gray-400 bg-gray-700 rounded">
+            <button className="absolute right-10 xl:right-12 top-1/2 transform -translate-y-1/2 hidden xl:block px-2 py-1 text-xs text-gray-400 bg-gray-700 rounded">
               Ctrl + K
             </button>
             <button 
               onClick={() => setShowFilters(!showFilters)}
               className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1 text-gray-400 hover:text-white"
             >
-              <Filter className="w-4 h-4" />
+              <Filter className="w-3 h-3 xl:w-4 xl:h-4" />
             </button>
           </div>
 
@@ -248,7 +251,7 @@ const Watchlist = ({
             <div
               key={idx}
               data-stock={stock.symbol}
-              className="relative p-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-all duration-300 cursor-pointer group overflow-visible"
+              className="relative p-2 xl:p-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-all duration-300 cursor-pointer group overflow-visible"
               onMouseEnter={() => handleStockHover(stock)}
               onMouseLeave={() => {
                 // Don't hide on mouse leave if dropdown is open
@@ -268,24 +271,24 @@ const Watchlist = ({
               
               <div className="relative z-10">
                 <div className="flex items-center justify-between mb-1">
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold text-white">{stock.symbol}</span>
+                  <div className="flex items-center gap-1 xl:gap-2">
+                    <span className="font-semibold text-white text-sm xl:text-base">{stock.symbol}</span>
                     {stock.exchange && (
-                      <span className="text-xs px-2 py-0.5 rounded bg-gray-600 text-gray-300">
+                      <span className="text-xs px-1 xl:px-2 py-0.5 rounded bg-gray-600 text-gray-300">
                         {stock.exchange}
                       </span>
                     )}
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1 xl:gap-2">
                     {(hoveredStock?.symbol === stock.symbol || showMoreDropdown === stock.symbol) ? (
-                      <div className="flex items-center gap-2 animate-fadeIn">
+                      <div className="flex items-center gap-1 xl:gap-2 animate-fadeIn">
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
                             setShowMoreDropdown(null);
                             handleBuySellClick(stock, 'buy');
                           }}
-                          className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 rounded text-xs font-semibold text-white transition-all hover:scale-105"
+                          className="px-2 xl:px-3 py-1 xl:py-1.5 bg-blue-600 hover:bg-blue-700 rounded text-xs font-semibold text-white transition-all hover:scale-105"
                         >
                           Buy
                         </button>
@@ -295,7 +298,7 @@ const Watchlist = ({
                             setShowMoreDropdown(null);
                             handleBuySellClick(stock, 'sell');
                           }}
-                          className="px-3 py-1.5 bg-red-600 hover:bg-red-700 rounded text-xs font-semibold text-white transition-all hover:scale-105"
+                          className="px-2 xl:px-3 py-1 xl:py-1.5 bg-red-600 hover:bg-red-700 rounded text-xs font-semibold text-white transition-all hover:scale-105"
                         >
                           Sell
                         </button>
@@ -305,9 +308,9 @@ const Watchlist = ({
                             setShowMoreDropdown(null);
                             handleStockClick(stock);
                           }}
-                          className="p-1.5 bg-gray-600 hover:bg-gray-500 rounded flex items-center justify-center transition-all hover:scale-105"
+                          className="p-1 xl:p-1.5 bg-gray-600 hover:bg-gray-500 rounded flex items-center justify-center transition-all hover:scale-105"
                         >
-                          <BarChart3 className="w-4 h-4" />
+                          <BarChart3 className="w-3 h-3 xl:w-4 xl:h-4" />
                         </button>
                         <div className="relative" ref={showMoreDropdown === stock.symbol ? dropdownRef : null}>
                           <button 
