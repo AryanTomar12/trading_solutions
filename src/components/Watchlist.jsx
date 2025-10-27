@@ -12,7 +12,8 @@ const Watchlist = ({
   watchlistGroups,
   currentWatchlist,
   setCurrentWatchlistId,
-  onCreateWatchlist
+  onCreateWatchlist,
+  isMobile = false
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
@@ -94,7 +95,7 @@ const Watchlist = ({
     return colorMap[colorName] || 'bg-blue-500';
   };
   return (
-    <div className="hidden lg:block w-80 xl:w-96 border-r border-gray-700 bg-gray-800 flex-shrink-0 overflow-y-auto">
+    <div className={`${isMobile ? 'block' : 'hidden lg:block'} ${isMobile ? 'w-full' : 'w-80 xl:w-96'} ${isMobile ? '' : 'border-r border-gray-700'} bg-gray-800 flex-shrink-0 overflow-y-auto`}>
       <div className="bg-gray-800 p-3 xl:p-4">
         <div className="flex items-center justify-between mb-3 xl:mb-4">
           <div className="relative flex-1">

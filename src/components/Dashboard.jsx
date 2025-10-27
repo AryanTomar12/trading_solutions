@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BarChart3 } from 'lucide-react';
+import { BarChart3, X } from 'lucide-react';
 import Header from './Header';
 import Watchlist from './Watchlist';
 import DashboardView from './DashboardView';
@@ -18,6 +18,7 @@ import RealChartView from './RealChartView';
 
 const TradingDashboard = ({ onLogout }) => {
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [showMobileWatchlist, setShowMobileWatchlist] = useState(false);
   
   // URL routing effect
   useEffect(() => {
@@ -33,9 +34,12 @@ const TradingDashboard = ({ onLogout }) => {
           setSelectedChartStock(stock);
           setActiveTab('dashboard');
         }
-      } else if (['/orders', '/holdings', '/positions', '/bids', '/funds'].includes(path)) {
+      } else if (['/orders', '/holdings', '/positions', '/bids', '/funds', '/watchlist'].includes(path)) {
         setActiveTab(path.substring(1));
         setSelectedChartStock(null);
+        if (path === '/watchlist') {
+          setShowMobileWatchlist(true);
+        }
       }
     };
 
@@ -229,10 +233,13 @@ const TradingDashboard = ({ onLogout }) => {
         setPrivacyMode={setPrivacyMode}
         selectedChartStock={selectedChartStock}
         handleBackToDashboard={handleBackToDashboard}
+        showMobileWatchlist={showMobileWatchlist}
+        setShowMobileWatchlist={setShowMobileWatchlist}
       />
 
       {/* Main Content */}
       <div className="flex-1 flex overflow-hidden">
+        {/* Desktop Watchlist */}
         <Watchlist 
           stockData={stockData}
           hoveredStock={hoveredStock}
@@ -246,6 +253,46 @@ const TradingDashboard = ({ onLogout }) => {
           setCurrentWatchlistId={setCurrentWatchlistId}
           onCreateWatchlist={handleCreateWatchlist}
         />
+
+        {/* Mobile Watchlist Overlay */}
+        {showMobileWatchlist && (
+          <div className="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-gray-800 rounded-lg border border-gray-700 w-full max-w-sm max-h-[80vh] overflow-hidden">
+              <div className="flex items-center justify-between p-4 border-b border-gray-700">
+                <h3 className="text-lg font-semibold text-white">Watchlist</h3>
+                <button
+                  onClick={() => {
+                    setShowMobileWatchlist(false);
+                    setActiveTab('dashboard');
+                    window.history.pushState({}, '', '/dashboard');
+                  }}
+                  className="p-2 text-gray-400 hover:text-white transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              <div className="overflow-y-auto max-h-[calc(80vh-80px)]">
+                <Watchlist 
+                  stockData={stockData}
+                  hoveredStock={hoveredStock}
+                  handleStockHover={handleStockHover}
+                  handleStockLeave={handleStockLeave}
+                  handleStockClick={(stock) => {
+                    handleStockClick(stock);
+                    setShowMobileWatchlist(false);
+                  }}
+                  handleBuySellClick={handleBuySellClick}
+                  privacyMode={privacyMode}
+                  watchlistGroups={watchlistGroups}
+                  currentWatchlist={currentWatchlist}
+                  setCurrentWatchlistId={setCurrentWatchlistId}
+                  onCreateWatchlist={handleCreateWatchlist}
+                  isMobile={true}
+                />
+              </div>
+            </div>
+          </div>
+        )}
 
           {/* Main Content Area */}
         <div className="flex-1 bg-[#1a1a1a] overflow-hidden flex flex-col w-full lg:w-auto">

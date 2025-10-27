@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Bell, ShoppingCart, Menu, X } from 'lucide-react';
 
-const Header = ({ activeTab, setActiveTab, showChat, setShowChat, chatMessages, showBasket, setShowBasket, showNotifications, setShowNotifications, showProfile, setShowProfile, privacyMode, setPrivacyMode, selectedChartStock, handleBackToDashboard }) => {
+const Header = ({ activeTab, setActiveTab, showChat, setShowChat, chatMessages, showBasket, setShowBasket, showNotifications, setShowNotifications, showProfile, setShowProfile, privacyMode, setPrivacyMode, selectedChartStock, handleBackToDashboard, showMobileWatchlist, setShowMobileWatchlist }) => {
   const [userName, setUserName] = useState('');
   const [userInitials, setUserInitials] = useState('');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -14,7 +14,7 @@ const Header = ({ activeTab, setActiveTab, showChat, setShowChat, chatMessages, 
     setUserInitials(initials);
   }, []);
 
-  const navItems = ['Dashboard', 'Orders', 'Holdings', 'Positions', 'Bids', 'Funds'];
+  const navItems = ['Dashboard', 'Watchlist', 'Orders', 'Holdings', 'Positions', 'Bids', 'Funds'];
 
   const handleNavClick = (item) => {
     setActiveTab(item.toLowerCase());
@@ -22,6 +22,9 @@ const Header = ({ activeTab, setActiveTab, showChat, setShowChat, chatMessages, 
     // Update URL
     if (item.toLowerCase() === 'dashboard') {
       window.history.pushState({}, '', '/dashboard');
+    } else if (item.toLowerCase() === 'watchlist') {
+      setShowMobileWatchlist(true);
+      window.history.pushState({}, '', '/watchlist');
     } else {
       window.history.pushState({}, '', `/${item.toLowerCase()}`);
     }

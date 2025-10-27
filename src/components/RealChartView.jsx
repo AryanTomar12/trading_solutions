@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { 
   ComposedChart, 
   XAxis, 
@@ -27,15 +27,20 @@ const RealChartView = ({
   const [hoveredData, setHoveredData] = useState(null);
   const [isLoadingOptionChain, setIsLoadingOptionChain] = useState(false);
 
-  // Generate realistic candlestick data
-  const generateChartData = () => {
+  // Generate realistic candlestick data with dynamic volume scaling
+  const generateChartData = useCallback(() => {
     const data = [];
     const basePrice = selectedChartStock?.price || 1000;
     let currentPrice = basePrice;
     const now = new Date();
     
-    for (let i = 200; i >= 0; i--) {
-      const time = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
+    // Calculate data points based on zoom level
+    const baseDataPoints = 200;
+    const dataPoints = Math.max(50, Math.floor(baseDataPoints / chartZoom));
+    const timeStep = Math.max(1, Math.floor(200 / dataPoints));
+    
+    for (let i = dataPoints; i >= 0; i--) {
+      const time = new Date(now.getTime() - i * timeStep * 24 * 60 * 60 * 1000);
       const date = time.toISOString().split('T')[0];
       
       // Generate realistic price movement
@@ -45,7 +50,12 @@ const RealChartView = ({
       const close = open + change;
       const high = Math.max(open, close) + Math.random() * volatility * currentPrice * 0.5;
       const low = Math.min(open, close) - Math.random() * volatility * currentPrice * 0.5;
-      const volume = Math.floor(Math.random() * 1000000) + 100000;
+      
+      // Dynamic volume scaling based on zoom level
+      // Higher zoom = more detailed volume data, lower zoom = aggregated volume
+      const baseVolume = Math.floor(Math.random() * 1000000) + 100000;
+      const volumeMultiplier = chartZoom > 1 ? chartZoom * 0.8 : chartZoom;
+      const volume = Math.floor(baseVolume * volumeMultiplier);
       
       data.push({
         date,
@@ -62,9 +72,12 @@ const RealChartView = ({
     }
     
     return data;
-  };
+  }, [selectedChartStock, chartZoom]);
 
-  const chartData = useMemo(() => generateChartData(), [selectedChartStock]);
+  const chartData = useMemo(() => generateChartData(), [generateChartData]);
+  
+  // Memoize chart data to prevent regeneration on hover
+  const stableChartData = useMemo(() => chartData, [chartData]);
 
   // Custom tooltip
   const CustomTooltip = ({ active, payload, label }) => {
@@ -333,9 +346,13 @@ const RealChartView = ({
         <div className="bg-[#131722] rounded-lg border border-gray-700 h-full">
           <ResponsiveContainer width="100%" height="100%">
             <ComposedChart
-              data={chartData}
+              data={stableChartData}
               margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-              onMouseMove={(data) => setHoveredData(data)}
+              onMouseMove={(data) => {
+                if (data && data.activePayload && data.activePayload[0]) {
+                  setHoveredData(data.activePayload[0].payload);
+                }
+              }}
             >
               <CartesianGrid strokeDasharray="3 3" stroke="#2B2B43" />
               <XAxis 
@@ -345,10 +362,19 @@ const RealChartView = ({
                 tickFormatter={(value) => new Date(value).toLocaleDateString()}
               />
               <YAxis 
+                yAxisId="price"
                 stroke="#485c7b"
                 fontSize={12}
                 domain={['dataMin - 10', 'dataMax + 10']}
                 tickFormatter={(value) => `₹${value}`}
+              />
+              <YAxis 
+                yAxisId="volume"
+                orientation="right"
+                stroke="#485c7b"
+                fontSize={12}
+                domain={[0, 'dataMax']}
+                tickFormatter={(value) => `${(value / 1000).toFixed(0)}K`}
               />
               <Tooltip content={<CustomTooltip />} />
               
@@ -362,6 +388,7 @@ const RealChartView = ({
               
               {/* Price line */}
               <Line
+                yAxisId="price"
                 type="monotone"
                 dataKey="close"
                 stroke="#26a69a"
@@ -372,6 +399,7 @@ const RealChartView = ({
               
               {/* Reference line for current price */}
               <ReferenceLine 
+                yAxisId="price"
                 y={selectedChartStock?.price} 
                 stroke="#ffa500" 
                 strokeDasharray="5 5"
@@ -403,7 +431,7 @@ const RealChartView = ({
           </div>
           {hoveredData && (
             <div className="text-sm text-gray-400">
-              Last: ₹{hoveredData.close} | Vol: {hoveredData.volume?.toLocaleString()}
+              Last: ₹{hoveredData.close} | Vol: {hoveredData.volume?.toLocaleString()} | Zoom: {chartZoom.toFixed(1)}x
             </div>
           )}
         </div>
